@@ -1,3 +1,10 @@
+from qiskit.transpiler.basepasses import TransformationPass
+from qiskit.dagcircuit import DAGCircuit
+from qiskit import QuantumRegister
+from qiskit.circuit import Delay
+from qiskit.circuit.library import RZZGate, CXGate, RZGate
+from pprint import pprint
+
 #Cross talk delay pass
 class CrossTalkDelayReplace(TransformationPass):
     """Adds cross-talk delay error information to circuit metadata for noise model post processing"""
@@ -54,17 +61,14 @@ class CrossTalkDelayReplace(TransformationPass):
 
         #need to split at every array element of pivotTimes in between startTime and endTime
         lastTime = startTime
-#         if DEBUG and VERBOSE: newTimes = []
         for time in pivotTimes:
             #need to not add delay of length 0 (startTime <)
             # but need to include the last delay until the end time (<= endTime)
             if startTime < time <= endTime:
                 #split
                 newCircuit.apply_operation_back(Delay(duration=time-lastTime), [reg[0]], [])
-#                 if DEBUG and VERBOSE: newTimes.append(time-lastTime)
                 lastTime = time
 
-#         if DEBUG and VERBOSE: print("Split delay(", startTime, ", ", endTime, ") (duration=", duration, ") into: ", newTimes)
         return newCircuit
 
     def getDelayPivotTimes(self, dag):
@@ -296,3 +300,5 @@ class CrossTalkDelayReplace(TransformationPass):
         #vs n*m+2*mlogm+n*m^2 for prioirty queue
 
         return final_dag
+
+    ####################END CROSS TALK DELAY PASS####################
