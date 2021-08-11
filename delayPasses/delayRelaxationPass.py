@@ -1,3 +1,5 @@
+from qiskit.transpiler.basepasses import TransformationPass
+
 #Delay replace pass
 class DelayReplace(TransformationPass):
     """Adds delay error information to circuit metadata for noise model post processing"""
